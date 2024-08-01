@@ -1,18 +1,29 @@
-from flask import Flask
 import datetime
-
-x = datetime.datetime.now()
+import json
+import pandas as pd
+from flask import Flask, request, jsonify
+from helpers import retrieveTable, addNewItem
 
 app = Flask(__name__)
 
 @app.route('/data')
-def getTime():
-    return {
-        'Name': 'Tom Dowling',
-        'Age': '22',
-        'Date': x,
-        'Programming': 'Python'
-    }
+def getDbData():
+    df = retrieveTable('amazonprices')
+    df['Price'] = df['Price'].fillna(value='Not Available')
+    records = df.to_dict(orient='records')
+    jsonData = json.dumps(records, indent=4)
+    print(jsonData)
+    return jsonData
+
+@app.route('/addItem', methods=['POST'])
+def addNewItemsToDB():
+    data = request.get_json()
+    itemUrl = data.get('itemUrl')
+    itemName = data.get('itemName')
+    itemType = data.get('itemType')
+    addNewItem(itemUrl, itemName, itemType)
+    return data
+
 
 if __name__ == '__main__':
     app.run(debug=True)
