@@ -1,0 +1,9 @@
+#flask
+.venv/
+__pycache__/
+.env
+
+#react
+node_modules/
+build/
+.env
