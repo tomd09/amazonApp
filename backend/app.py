@@ -12,7 +12,6 @@ def getDbData():
     df['Price'] = df['Price'].fillna(value='Not Available')
     records = df.to_dict(orient='records')
     jsonData = json.dumps(records, indent=4)
-    print(jsonData)
     return jsonData
 
 @app.route('/addItem', methods=['POST'])
@@ -23,7 +22,6 @@ def addNewItemsToDB():
     itemType = data.get('itemType')
     addNewItem(itemUrl, itemName, itemType)
     return data
-
 
 if __name__ == '__main__':
     app.run(debug=True)
