@@ -75,7 +75,13 @@ def gettingImage(soup, title):
     imgsFolder = os.path.join(currentDir, 'images')
     os.makedirs(imgsFolder, exist_ok=True) 
     imgTags = soup.find_all('img')
-    imgUrl = imgTags[6].get('src') 
+    imgUrl = '' 
+    desiredPrefix = 'https://m.media-amazon.com/images/I/'
+    for tag in imgTags:
+        src = tag.get('src')
+        if src.startswith(desiredPrefix):
+            imgUrl = src
+            break
     imageResponse = requests.get(imgUrl)
     imgPath = os.path.join(imgsFolder, title)
     with open(imgPath, 'wb') as file:
