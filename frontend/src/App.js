@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css'
 import AddItemForm from './components/addItemForm';
+import { Item } from './components/item';
 
 function App(){
   const [amazonItems, setAmazonItems] = useState([]);
@@ -23,19 +24,23 @@ function App(){
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Flask and React</h1>
+        <h1>Amazon Web Scraper</h1>
       </header>
-      <div>
-            {amazonItems.map((item, index) => (
-                <div key={index}>
-                    <p>Name: {item.Name}</p>
-                    <p>Type: {item.Type}</p>
-                    <p>Price: {item.Price}</p> 
-                    <p>Time: {item.Time}</p>
-                </div>
-            ))}
+      <div className='container'>
+        <div className='box itemDisplay'>
+          <AddItemForm />
         </div>
-        <AddItemForm />
+        <div className='box itemList'>
+          <ul>
+            {amazonItems.map((item, index) => (
+              <div key={index}>
+                <Item item={item}/>
+                <br/>
+              </div>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
