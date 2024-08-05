@@ -30,4 +30,15 @@
   background-color: #282c34;
   color: whitesmoke;
   border-radius: 15px;
+  width: 60%;
+}
+
+.itemImageBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.itemImage{
+  height: 200px;
 }

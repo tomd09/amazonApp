@@ -35,6 +35,7 @@ function App(){
             {amazonItems.map((item, index) => (
               <div key={index}>
                 <Item item={item}/>
+                <br/>
               </div>
             ))}
           </ul>
