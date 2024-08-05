@@ -10,6 +10,7 @@ app = Flask(__name__)
 def getDbData():
     df = retrieveTable('amazonprices')
     df['Price'] = df['Price'].fillna(value='Not Available')
+    print(df.columns)
     records = df.to_dict(orient='records')
     jsonData = json.dumps(records, indent=4)
     return jsonData

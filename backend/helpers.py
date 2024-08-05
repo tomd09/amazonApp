@@ -23,26 +23,6 @@ def retrieveTable(table):
         df = pd.read_sql(text(f'SELECT * FROM {table};'), conn)
     return df
 
-def addNewItem(url, name, type):
-    try:
-        session = requests.Session()
-        session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-        })
-        response = session.get(url)
-        htmlContent = response.text
-        soup = BeautifulSoup(htmlContent, 'html.parser')
-        priceDiv = soup.find('div', class_='a-section a-spacing-none aok-align-center aok-relative')
-        price = None
-        if priceDiv:
-            price = float(priceDiv.text.strip().split(' ')[-1][1:])
-        df = pd.DataFrame([[name, type, url, price, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')]], columns=['Name', 'Type', 'Link', 'Price', 'Time'])
-        engine = initialiseConnection()
-        df.to_sql(name='amazonprices', con=engine, index=False, if_exists='append')
-    except:
-        print('Invalid Amazon URL Supplied')
-
-
 def creatingSoup(url):
     #beautifulsoup to scrape amazon url with session to stop blockers
     session = requests.Session()
@@ -71,9 +51,6 @@ def creatingImageLinkTitle(soup):
     return 'No Title Found'
 
 def gettingImage(soup, title):
-    currentDir = os.path.dirname(__name__)
-    imgsFolder = os.path.join(currentDir, 'images')
-    os.makedirs(imgsFolder, exist_ok=True) 
     imgTags = soup.find_all('img')
     imgUrl = '' 
     desiredPrefix = 'https://m.media-amazon.com/images/I/'
@@ -83,7 +60,7 @@ def gettingImage(soup, title):
             imgUrl = src
             break
     imageResponse = requests.get(imgUrl)
-    imgPath = os.path.join(imgsFolder, title)
+    imgPath = os.path.join('frontend/public/images', title)
     with open(imgPath, 'wb') as file:
         file.write(imageResponse.content)
     
@@ -91,8 +68,8 @@ def addNewItem(url, name, type):
     existingDf = retrieveTable('amazonprices')
     uniqueURLs = list(existingDf['Link'].unique())
     new = False
-    #if url not in uniqueURLs:
-        #new = True
+    if url not in uniqueURLs:
+        new = True
     try:
         soup = creatingSoup(url)
         imageLinkTitle = creatingImageLinkTitle(soup)

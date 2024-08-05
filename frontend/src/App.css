@@ -4,7 +4,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 50vh;
+  min-height: 20vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,15 +13,21 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.container {
+  display: flex;
+  margin: 0;
+  padding: 0;;
+  box-sizing: border-box;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.box {
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.itemCard {
+  background-color: #282c34;
+  color: whitesmoke;
+  border-radius: 15px;
 }
