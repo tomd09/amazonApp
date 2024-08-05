@@ -7,10 +7,10 @@ function App(){
   const [selectOptions, setSelectOptions] = useState([]);
   const [selectedOption, setSelectedOption] = useState('All');
   const [amazonItems, setAmazonItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [fetchDataTrigger, setFetchDataTrigger] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchSelect = async () => {
       try {
         const response = await fetch('/selectionTypes');
         if (response.ok) {
@@ -21,7 +21,7 @@ function App(){
         console.log(error);
       }
     };
-    fetchData();
+    fetchSelect();
   }, [])
 
   const handleSelect = (e) => {
@@ -41,7 +41,32 @@ function App(){
       }
     };
     fetchData();
-  }, [selectedOption]);
+    if (fetchDataTrigger) {
+      fetchData();
+      setFetchDataTrigger(false);
+    }
+  }, [selectedOption, fetchDataTrigger]);
+
+  const handleFormSubmit = async (formData) => {
+    try {
+      const response = await fetch('/addItem', {
+        method: 'POST',
+        body: JSON.stringify(formData),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.ok) {
+        const result = await response.json();
+        setFetchDataTrigger(true);
+      } 
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  
+
+
 
   return (
     <div className="App">
@@ -50,25 +75,28 @@ function App(){
       </header>
       <div className='container'>
         <div className='box itemDisplay'>
-          <AddItemForm />
+          <AddItemForm onFormSubmit={handleFormSubmit}/>
         </div>
-        <div className='box itemList'>
-          <p>Filter Items by Type</p>
-          <select value={selectedOption} onChange={handleSelect}>
+
+        <div className='box itemSide'>
+          <div className='typeSelection'>
+            <p>Filter Items by Type</p>
+            <select value={selectedOption} onChange={handleSelect}>
             {selectOptions.map((option, index) => (
               <option key={index} value={option}>
                 {option}
               </option>
             ))}
-          </select>
-          <ul>
+            </select>
+          </div>
+
+          <div className='itemList'>
             {amazonItems.map((item, index) => (
               <div key={index}>
                 <Item item={item}/>
-                <br/>
               </div>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
     </div>

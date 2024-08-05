@@ -4,12 +4,12 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 20vh;
+  min-height: 10vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(5px + 2vmin);
   color: white;
 }
 
@@ -26,11 +26,48 @@
   box-sizing: border-box;
 }
 
+.itemSide {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: aqua;
+}
+
+.typeSelection{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60%;
+  color: whitesmoke;
+  background-color: #282c34;
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+.itemList {
+  height: 700px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.itemList ::-webkit-scrollbar {
+  width: 8px;
+}
+.itemList ::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.itemList ::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 .itemCard {
   background-color: #282c34;
   color: whitesmoke;
   border-radius: 15px;
-  width: 60%;
+  margin-bottom: 20px;
 }
 
 .itemImageBox {

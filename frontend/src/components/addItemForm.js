@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-function AddItemForm() {
+function AddItemForm({ onFormSubmit }) {
     const [itemUrl, setItemUrl] = useState('');
     const [itemName, setItemName] = useState('');
     const [itemType, setItemType] = useState('');
@@ -16,26 +16,11 @@ function AddItemForm() {
             itemName,
             itemType
         }
-        try {
-            const response = await fetch('/addItem', {
-                method: 'POST',
-                body: JSON.stringify(itemData),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (response.ok) {
-                alert('Item added successfully');
-                setItemUrl('');
-                setItemName('');
-                setItemType('');
-            } else {
-                const errorData = await response.json();
-                alert(`Failed to add item: ${errorData.error}`);
-            }
-        } catch (error) {
-            console.log(error);
-        }
+        await onFormSubmit(itemData);
+        setItemUrl('');
+        setItemName('');
+        setItemType('');
+            
     };
 
     return (

@@ -1,7 +1,6 @@
-import datetime
+import os
 import json
-import pandas as pd
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from helpers import retrieveTable, addNewItem
 
 app = Flask(__name__)
@@ -10,13 +9,15 @@ app = Flask(__name__)
 def getSelectionTypes():
     df = retrieveTable('amazonprices')
     types = ['All'] + list(df['Type'].unique()) 
-    print(jsonify(types))
     return jsonify(types)
+
+@app.route('/images/<path:filename>')
+def serveImage(filename):
+    return send_from_directory('static/images', filename)
 
 @app.route('/data', methods=['GET'])
 def getDbData():
     option = request.args.get('option')
-    print(option)
     df = retrieveTable('amazonprices')
     if option != 'All':
         df = df[df['Type'] == option]
