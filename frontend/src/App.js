@@ -4,12 +4,34 @@ import AddItemForm from './components/addItemForm';
 import { Item } from './components/item';
 
 function App(){
+  const [selectOptions, setSelectOptions] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('All');
   const [amazonItems, setAmazonItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/data');
+        const response = await fetch('/selectionTypes');
+        if (response.ok) {
+          const result = await response.json();
+          setSelectOptions(result);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [])
+
+  const handleSelect = (e) => {
+    setSelectedOption(e.target.value);
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`/data?option=${encodeURIComponent(selectedOption)}`);
         if (response.ok) {
           const result = await response.json();
           setAmazonItems(result);
@@ -19,7 +41,7 @@ function App(){
       }
     };
     fetchData();
-  }, []);
+  }, [selectedOption]);
 
   return (
     <div className="App">
@@ -31,6 +53,14 @@ function App(){
           <AddItemForm />
         </div>
         <div className='box itemList'>
+          <p>Filter Items by Type</p>
+          <select value={selectedOption} onChange={handleSelect}>
+            {selectOptions.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
           <ul>
             {amazonItems.map((item, index) => (
               <div key={index}>

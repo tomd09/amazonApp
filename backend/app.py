@@ -6,11 +6,21 @@ from helpers import retrieveTable, addNewItem
 
 app = Flask(__name__)
 
-@app.route('/data')
-def getDbData():
+@app.route('/selectionTypes')
+def getSelectionTypes():
     df = retrieveTable('amazonprices')
+    types = ['All'] + list(df['Type'].unique()) 
+    print(jsonify(types))
+    return jsonify(types)
+
+@app.route('/data', methods=['GET'])
+def getDbData():
+    option = request.args.get('option')
+    print(option)
+    df = retrieveTable('amazonprices')
+    if option != 'All':
+        df = df[df['Type'] == option]
     df['Price'] = df['Price'].fillna(value='Not Available')
-    print(df.columns)
     records = df.to_dict(orient='records')
     jsonData = json.dumps(records, indent=4)
     return jsonData
