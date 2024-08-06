@@ -35,5 +35,16 @@ def addNewItemsToDB():
     addNewItem(itemUrl, itemName, itemType)
     return data
 
+@app.route('/itemData', methods=['GET'])
+def getItemData():
+    id = request.args.get('id')
+    df = retrieveTable('amazonprices')
+    df = df[df['Link'] == id]
+    print(df)
+    name = df['Name'].iloc[0]
+    records = df.to_dict(orient='records')
+    jsonData =json.dumps(records, indent=4)
+    return jsonify(name)
+
 if __name__ == '__main__':
     app.run(debug=True)

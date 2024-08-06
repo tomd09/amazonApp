@@ -15,15 +15,14 @@
 
 .container {
   display: flex;
-  margin: 0;
-  padding: 0;;
-  box-sizing: border-box;
+  width: 100%;
 }
 
 .box {
   flex: 1;
   padding: 20px;
   box-sizing: border-box;
+  overflow-wrap: break-word;
 }
 
 .itemSide {
@@ -78,4 +77,16 @@
 
 .itemImage{
   height: 200px;
+}
+
+.productInfo {
+  background-color: blueviolet;
+  width: 100%;
+}
+
+.productName {
+  overflow: auto;
+  overflow-wrap: break-word;
+  background-color: crimson;
+  margin-top: 25%;
 }
