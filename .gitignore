@@ -2,6 +2,8 @@
 .venv/
 __pycache__/
 .env
+backend\trial.ipynb
+backend\trial.py
 
 #react
 node_modules/
