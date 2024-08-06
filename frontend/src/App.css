@@ -84,9 +84,13 @@
   width: 100%;
 }
 
+.newProductForm {
+  margin-bottom: 8%;
+}
+
 .productName {
   overflow: auto;
   overflow-wrap: break-word;
   background-color: crimson;
-  margin-top: 25%;
+  margin-top: 5%;
 }

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './App.css'
 import AddItemForm from './components/addItemForm';
-import {Item } from './components/item';
+import { Item } from './components/item';
+import LineChart from './components/lineChart';
 
 function App(){
   const [selectOptions, setSelectOptions] = useState([]);
   const [selectedOption, setSelectedOption] = useState('All');
   const [amazonItems, setAmazonItems] = useState([]);
   const [fetchDataTrigger, setFetchDataTrigger] = useState(false);
-  const [itemData, setItemData] = useState('')
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [itemData, setItemData] = useState({ time: [], price: [], title: '' });
 
   useEffect(() => {
     const fetchSelect = async () => {
@@ -29,6 +31,7 @@ function App(){
     setSelectedOption(e.target.value);
   }
 
+  //fetches all data initially but also filters on select. Initial load will grab first item to fill itemData
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,7 +39,10 @@ function App(){
         if (response.ok) {
           const result = await response.json();
           setAmazonItems(result);
-          setItemData(result[0].Name);
+          if (initialLoad) {
+            fetchItemData(result[0].Link)
+            setInitialLoad(false);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -47,7 +53,7 @@ function App(){
       fetchData();
       setFetchDataTrigger(false);
     }
-  }, [selectedOption, fetchDataTrigger]);
+  }, [selectedOption, fetchDataTrigger, initialLoad]);
 
   const handleFormSubmit = async (formData) => {
     try {
@@ -59,27 +65,37 @@ function App(){
         }
       });
       if (response.ok) {
-        const result = await response.json();
-        console.log(result);
+        await response.json().then(() => {});
         setFetchDataTrigger(true);
       } 
     } catch (error) {
       console.log(error);
     }
   }
-  
-  const handleImageClick = async (id) => {
+
+  const fetchItemData = async (id) => {
     try {
       const response = await fetch(`/itemData?id=${encodeURIComponent(id)}`);
       if (response.ok) {
         const result = await response.json();
-        setItemData(result);
+        const parsedData = JSON.parse(result);
+        const time = parsedData.data.map(row => row[2]);
+        const price = parsedData.data.map(row => row[1]);
+        const title = parsedData.data[0][0];
+        setItemData({ time, price, title});
       }
     } catch (error) {
       console.log(error);
     }
   }
 
+  const handleImageClick = (id) => {
+    fetchItemData(id);
+  }
+
+  function containsOnlyNulls(arr) {
+    return arr.every(item => item === null);
+  }
 
   return (
     <div className="App">
@@ -91,9 +107,15 @@ function App(){
 
         <div className='box'>
           <div className='productInfo'>
-            <AddItemForm onFormSubmit={handleFormSubmit}/>
-            <div className='productName'>
-              <p>{itemData}</p>
+            <div className='newProductForm'>
+              <AddItemForm onFormSubmit={handleFormSubmit}/>
+            </div>
+            <div className='productPlot'>
+              {containsOnlyNulls(itemData.price) ? (
+                <p>There is no pricing data for this product</p>
+              ) : (
+                <LineChart time={itemData.time} price={itemData.price} title={itemData.title}/>
+              )}
             </div>
           </div>
         </div>
