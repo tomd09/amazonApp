@@ -41,9 +41,11 @@ def creatingImageLinkTitle(soup):
         span = title.find('span', id='productTitle')
         if span:
             span = span.text.strip().replace(' ', '-')
-            title = re.sub(r'[^\w\-]', '', span)
-            title = re.sub(r'-+', '-', title)
-            title = f'IMAGE-{title}.jpg'
+            spanText = re.sub(r'[^\w\-]', '', span)
+            spanText = re.sub(r'-+', '-', spanText)
+            segments = spanText.split('-')[:12]
+            limitedTitle = '-'.join(segments)
+            title = f'IMAGE-{limitedTitle}.jpg'
             return title
     return 'No Title Found'
 
@@ -51,20 +53,16 @@ def gettingImage(soup, title):
     imgTags = soup.find_all('img')
     imgUrl = '' 
     desiredPrefix = 'https://m.media-amazon.com/images/I/'
-    print('found all img tags')
     for tag in imgTags:
         src = tag.get('src')
         if src == None:
             pass
         elif src.startswith(desiredPrefix) and '_SX' in src and '_SY' in src:
             imgUrl = src
-            print('found desired src')
             break
-    print('trying image request')
     imageResponse = requests.get(imgUrl)
-    print('got image response')
-    imgPath = os.path.join('static', 'images', title)
-    print('got image path')
+    imgPath = os.path.join('backend', 'static', 'images', title)
+    os.makedirs(os.path.dirname(imgPath), exist_ok=True)
     with open(imgPath, 'wb') as file:
         print('opened attempting to write')
         file.write(imageResponse.content)
@@ -72,9 +70,8 @@ def gettingImage(soup, title):
 def addNewImage(url):
     try:
         soup = creatingSoup(url)
-        print('got soup')
         imageLinkTitle = creatingImageLinkTitle(soup)
-        print('got link title')
+        print('got img link title')
         gettingImage(soup, imageLinkTitle)
     except:
         print('Invalid Amazon URL Supplied')

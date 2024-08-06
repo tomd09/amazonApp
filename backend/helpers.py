@@ -44,9 +44,11 @@ def creatingImageLinkTitle(soup):
         span = title.find('span', id='productTitle')
         if span:
             span = span.text.strip().replace(' ', '-')
-            title = re.sub(r'[^\w\-]', '', span)
-            title = re.sub(r'-+', '-', title)
-            title = f'IMAGE-{title}.jpg'
+            spanText = re.sub(r'[^\w\-]', '', span)
+            spanText = re.sub(r'-+', '-', spanText)
+            segments = spanText.split('-')[:12]
+            limitedTitle = '-'.join(segments)
+            title = f'IMAGE-{limitedTitle}.jpg'
             return title
     return 'No Title Found'
 
