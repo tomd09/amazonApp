@@ -60,7 +60,8 @@ def gettingImage(soup, title):
             imgUrl = src
             break
     imageResponse = requests.get(imgUrl)
-    imgPath = os.path.join('frontend/public/images', title)
+    imgPath = os.path.join('static', 'images', title)
+    os.makedirs(os.path.dirname(imgPath), exist_ok=True)
     with open(imgPath, 'wb') as file:
         file.write(imageResponse.content)
     

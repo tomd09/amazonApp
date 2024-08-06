@@ -1,36 +1,76 @@
 .App {
   text-align: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #C8CAD3;
 }
 
 .App-header {
   background-color: #282c34;
-  min-height: 20vh;
+  min-height: 10vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(5px + 2vmin);
   color: white;
+  margin-bottom: 2%;
 }
 
 .container {
   display: flex;
-  margin: 0;
-  padding: 0;;
-  box-sizing: border-box;
+  width: 100%;
 }
 
 .box {
   flex: 1;
   padding: 20px;
   box-sizing: border-box;
+  overflow-wrap: break-word;
+}
+
+.itemSide {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.typeSelection{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60%;
+  color: whitesmoke;
+  background-color: #282c34;
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+
+.itemList {
+  height: 71vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #282c34;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .itemCard {
   background-color: #282c34;
   color: whitesmoke;
   border-radius: 15px;
-  width: 60%;
+  margin-bottom: 20px;
 }
 
 .itemImageBox {
@@ -41,4 +81,31 @@
 
 .itemImage{
   height: 200px;
+}
+
+.productInfo {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+}
+
+.newProductForm {
+  margin-bottom: 8%;
+  background-color: #282c34;
+  padding: 15px;
+  width: 60%;
+  border-radius: 15px;
+}
+
+.productPlot {
+  background-color: #282c34;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 50vh;
+  width: 90%;
+  border-radius: 15px;
 }
