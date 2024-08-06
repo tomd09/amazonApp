@@ -112,7 +112,10 @@ function App(){
             </div>
             <div className='productPlot'>
               {containsOnlyNulls(itemData.price) ? (
-                <p>There is no pricing data for this product</p>
+                <div>
+                  <h2>{itemData.title}</h2>
+                  <p>No pricing data for this product</p>
+                </div>
               ) : (
                 <LineChart time={itemData.time} price={itemData.price} title={itemData.title}/>
               )}

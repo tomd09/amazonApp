@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #C8CAD3;
 }
 
 .App-header {
@@ -11,6 +14,7 @@
   justify-content: center;
   font-size: calc(5px + 2vmin);
   color: white;
+  margin-bottom: 2%;
 }
 
 .container {
@@ -29,7 +33,6 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  background-color: aqua;
 }
 
 .typeSelection{
@@ -44,22 +47,23 @@
 }
 
 .itemList {
-  height: 700px;
+  height: 71vh;
   overflow-y: scroll;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
 }
 
-.itemList ::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 8px;
+  background: transparent;
 }
-.itemList ::-webkit-scrollbar-thumb {
-  background: #888;
+::-webkit-scrollbar-thumb {
+  background: #282c34;
   border-radius: 4px;
 }
-.itemList ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .itemCard {
@@ -80,17 +84,28 @@
 }
 
 .productInfo {
-  background-color: blueviolet;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
   width: 100%;
 }
 
 .newProductForm {
   margin-bottom: 8%;
+  background-color: #282c34;
+  padding: 15px;
+  width: 60%;
+  border-radius: 15px;
 }
 
-.productName {
-  overflow: auto;
-  overflow-wrap: break-word;
-  background-color: crimson;
-  margin-top: 5%;
+.productPlot {
+  background-color: #282c34;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 50vh;
+  width: 90%;
+  border-radius: 15px;
 }
