@@ -7,6 +7,8 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from sqlalchemy import create_engine, text
 
+currentTable = 'historicaldata'
+
 def initialiseConnection():
     logging.disable(logging.WARNING)
     usr = 'root'
@@ -21,7 +23,21 @@ def retrieveTable(table):
     engine = initialiseConnection()
     with engine.connect() as conn:
         df = pd.read_sql(text(f'SELECT * FROM {table};'), conn)
+    datetimeColumns = df.select_dtypes(include=['datetime64[ns]', 'datetime64']).columns
+    for column in datetimeColumns:
+        df[column] = df[column].dt.strftime('%Y-%m-%d %H:%M:%S')
     return df
+
+def retrieveItemList(table):
+    engine = initialiseConnection()
+    with engine.connect() as conn:
+        df = pd.read_sql(text(f'SELECT * FROM {table};'), conn)
+    df = df.sort_values(by='Time', ascending=False).drop_duplicates(subset='Link', keep='first')
+    datetimeColumns = df.select_dtypes(include=['datetime64[ns]', 'datetime64']).columns
+    for column in datetimeColumns:
+        df[column] = df[column].dt.strftime('%Y-%m-%d %H:%M:%S')
+    return df
+    
 
 def creatingSoup(url):
     #beautifulsoup to scrape amazon url with session to stop blockers
@@ -44,9 +60,11 @@ def creatingImageLinkTitle(soup):
         span = title.find('span', id='productTitle')
         if span:
             span = span.text.strip().replace(' ', '-')
-            title = re.sub(r'[^\w\-]', '', span)
-            title = re.sub(r'-+', '-', title)
-            title = f'IMAGE-{title}.jpg'
+            spanText = re.sub(r'[^\w\-]', '', span)
+            spanText = re.sub(r'-+', '-', spanText)
+            segments = spanText.split('-')[:12]
+            limitedTitle = '-'.join(segments)
+            title = f'IMAGE-{limitedTitle}.jpg'
             return title
     return 'No Title Found'
 
@@ -66,22 +84,28 @@ def gettingImage(soup, title):
         file.write(imageResponse.content)
     
 def addNewItem(url, name, type):
-    existingDf = retrieveTable('amazonprices')
+    existingDf = retrieveTable(currentTable)
     uniqueURLs = list(existingDf['Link'].unique())
     new = False
     if url not in uniqueURLs:
         new = True
     try:
+        print('trying to create soup')
         soup = creatingSoup(url)
+        print('found soup')
         imageLinkTitle = creatingImageLinkTitle(soup)
+        print('got image link name')
         if new == True: #only save image if the url is fresh
             gettingImage(soup, imageLinkTitle)
+        print('image saved')
         priceDiv = soup.find('div', class_='a-section a-spacing-none aok-align-center aok-relative')
         price = None
         if priceDiv:
             price = float(priceDiv.text.strip().split(' ')[-1][1:])
-        df = pd.DataFrame([[name, type, url, price, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), imageLinkTitle]], columns=['Name', 'Type', 'Link', 'Price', 'Time', 'Image Link'])
+        df = pd.DataFrame([[name, type, url, price, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), imageLinkTitle]], columns=['Name', 'Type', 'Link', 'Price', 'Time', 'ImageLink'])
+        print('entry created')
         engine = initialiseConnection()
-        df.to_sql(name='amazonprices', con=engine, index=False, if_exists='append')
+        df.to_sql(name=currentTable, con=engine, index=False, if_exists='append')
+        print('entered into db')
     except:
         print('Invalid Amazon URL Supplied')
