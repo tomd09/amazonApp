@@ -90,16 +90,22 @@ def addNewItem(url, name, type):
     if url not in uniqueURLs:
         new = True
     try:
+        print('trying to create soup')
         soup = creatingSoup(url)
+        print('found soup')
         imageLinkTitle = creatingImageLinkTitle(soup)
+        print('got image link name')
         if new == True: #only save image if the url is fresh
             gettingImage(soup, imageLinkTitle)
+        print('image saved')
         priceDiv = soup.find('div', class_='a-section a-spacing-none aok-align-center aok-relative')
         price = None
         if priceDiv:
             price = float(priceDiv.text.strip().split(' ')[-1][1:])
-        df = pd.DataFrame([[name, type, url, price, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), imageLinkTitle]], columns=['Name', 'Type', 'Link', 'Price', 'Time', 'Image Link'])
+        df = pd.DataFrame([[name, type, url, price, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), imageLinkTitle]], columns=['Name', 'Type', 'Link', 'Price', 'Time', 'ImageLink'])
+        print('entry created')
         engine = initialiseConnection()
         df.to_sql(name=currentTable, con=engine, index=False, if_exists='append')
+        print('entered into db')
     except:
         print('Invalid Amazon URL Supplied')
