@@ -7,6 +7,8 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from sqlalchemy import create_engine, text
 
+currentTable = 'historicaldata'
+
 def initialiseConnection():
     logging.disable(logging.WARNING)
     usr = 'root'
@@ -21,7 +23,21 @@ def retrieveTable(table):
     engine = initialiseConnection()
     with engine.connect() as conn:
         df = pd.read_sql(text(f'SELECT * FROM {table};'), conn)
+    datetimeColumns = df.select_dtypes(include=['datetime64[ns]', 'datetime64']).columns
+    for column in datetimeColumns:
+        df[column] = df[column].dt.strftime('%Y-%m-%d %H:%M:%S')
     return df
+
+def retrieveItemList(table):
+    engine = initialiseConnection()
+    with engine.connect() as conn:
+        df = pd.read_sql(text(f'SELECT * FROM {table};'), conn)
+    df = df.sort_values(by='Time', ascending=False).drop_duplicates(subset='Link', keep='first')
+    datetimeColumns = df.select_dtypes(include=['datetime64[ns]', 'datetime64']).columns
+    for column in datetimeColumns:
+        df[column] = df[column].dt.strftime('%Y-%m-%d %H:%M:%S')
+    return df
+    
 
 def creatingSoup(url):
     #beautifulsoup to scrape amazon url with session to stop blockers
@@ -68,7 +84,7 @@ def gettingImage(soup, title):
         file.write(imageResponse.content)
     
 def addNewItem(url, name, type):
-    existingDf = retrieveTable('amazonprices')
+    existingDf = retrieveTable(currentTable)
     uniqueURLs = list(existingDf['Link'].unique())
     new = False
     if url not in uniqueURLs:
@@ -84,6 +100,6 @@ def addNewItem(url, name, type):
             price = float(priceDiv.text.strip().split(' ')[-1][1:])
         df = pd.DataFrame([[name, type, url, price, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), imageLinkTitle]], columns=['Name', 'Type', 'Link', 'Price', 'Time', 'Image Link'])
         engine = initialiseConnection()
-        df.to_sql(name='amazonprices', con=engine, index=False, if_exists='append')
+        df.to_sql(name=currentTable, con=engine, index=False, if_exists='append')
     except:
         print('Invalid Amazon URL Supplied')

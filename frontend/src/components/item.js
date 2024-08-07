@@ -5,7 +5,7 @@ export function Item({item, onImageClick}) {
         <div className='itemCard'>
             <div className='container'>
                 <div className='box itemImageBox'>
-                    <img src={`images/${item['Image Link']}`} 
+                    <img src={`images/${item.ImageLink}`} 
                          alt={item.Name} 
                          className='itemImage' 
                          onClick={() => onImageClick(item.Link)}/>
